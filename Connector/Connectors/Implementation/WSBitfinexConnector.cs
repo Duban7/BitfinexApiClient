@@ -58,8 +58,6 @@ namespace Connector.Connectors.Implementation
 
         private void ProcessWebSocketMessage(string message)
         {
-            Debug.WriteLine(message);
-            Debug.WriteLine("<----Separator\n");
             try
             {
                 using var doc = JsonDocument.Parse(message);
@@ -72,7 +70,9 @@ namespace Connector.Connectors.Implementation
                         var channel = root.GetProperty("channel").GetString();
 
                         root.TryGetProperty("symbol", out var element);
-                        root.TryGetProperty("key", out element);
+                        if(element.ValueKind == JsonValueKind.Undefined) 
+                            root.TryGetProperty("key", out element);
+                        
                         string prop = element.GetString()!.Split(':').Last();
 
                         _channelToPairMap[chanId.GetInt32()] = $"{channel}:{prop.Replace("t", "")}";
@@ -107,7 +107,7 @@ namespace Connector.Connectors.Implementation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error processing WebSocket message: {ex.Message}");
+                Debug.WriteLine($"Error processing WebSocket message: {ex.Message}");
             }
         }
 
@@ -122,30 +122,44 @@ namespace Connector.Connectors.Implementation
 
         private void ProcessTradeUpdate(string pair, JsonElement[] dataArray)
         {
-            Debug.WriteLine(dataArray[1].ToString());
-            var trades = dataArray[1].EnumerateArray().ToArray();
-            if (trades.Length > 0)
+            if (dataArray[1].ValueKind == JsonValueKind.Array)
             {
-                foreach (var trade in trades)
+                var trades = dataArray[1].EnumerateArray().ToArray();
+                if (trades.Length > 0)
                 {
-                    var tradeData = trade.EnumerateArray().ToArray();
-                    if (tradeData.Length >= 4)
+                    foreach (var trade in trades)
                     {
-                        var tradeObj = new Trade
-                        {
-                            Id = tradeData[0].GetInt64().ToString(),
-                            Time = DateTimeOffset.FromUnixTimeMilliseconds(tradeData[1].GetInt64()).DateTime,
-                            Amount = Math.Abs(tradeData[2].GetDecimal()),
-                            Price = tradeData[3].GetDecimal(),
-                            Side = tradeData[2].GetDecimal() > 0 ? "Buy" : "Sell"
-                        };
-
-                        if (tradeObj.Side == "Buy")
-                            NewBuyTrade?.Invoke(tradeObj);
-                        else
-                            NewSellTrade?.Invoke(tradeObj);
+                        var tradeData = trade.EnumerateArray().ToArray();
+                        ProcessSingleTrade(tradeData, pair);
                     }
                 }
+            }
+            else
+            {
+                //te - trade executed tu - trade uodated
+                var tradeData = dataArray[2].EnumerateArray().ToArray();
+                ProcessSingleTrade(tradeData, pair);
+            }
+        }
+
+        private void ProcessSingleTrade(JsonElement[] tradeData, string pair)
+        {
+            if (tradeData.Length >= 4)
+            {
+                var tradeObj = new Trade
+                {
+                    Pair = pair,
+                    Id = tradeData[0].GetInt64().ToString(),
+                    Time = DateTimeOffset.FromUnixTimeMilliseconds(tradeData[1].GetInt64()).DateTime,
+                    Amount = Math.Abs(tradeData[2].GetDecimal()),
+                    Price = tradeData[3].GetDecimal(),
+                    Side = tradeData[2].GetDecimal() > 0 ? "Buy" : "Sell"
+                };
+
+                if (tradeObj.Side == "Buy")
+                    NewBuyTrade?.Invoke(tradeObj);
+                else
+                    NewSellTrade?.Invoke(tradeObj);
             }
         }
 

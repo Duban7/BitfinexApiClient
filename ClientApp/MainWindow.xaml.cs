@@ -28,8 +28,8 @@ namespace ClientApp
             con = new();
             Wscon = new();
 
-            //Wscon.SubscribeCandles("BTCUSD", 60, count: 1);
-            //Wscon.CandleSeriesProcessing += NewBuyTradeHandle;
+            Wscon.SubscribeCandles("BTCUSD", 60, count: 1);
+            Wscon.CandleSeriesProcessing += NewBuyTradeHandle;
             Wscon.SubscribeTrades("BTCUSD", 1);
             Wscon.NewSellTrade += Wscon_NewSellTrade;
             Wscon.NewBuyTrade += Wscon_NewSellTrade;
@@ -37,13 +37,13 @@ namespace ClientApp
 
         private void Wscon_NewSellTrade(Trade obj)
         {
-            Debug.WriteLine(obj.Time);
+            Debug.WriteLine("TRADE:----|"+obj.Time+"---------------invoke method");// te - trade executed tu - trade uodated
         }
 
         private void NewBuyTradeHandle(Candle candle)
         {
 
-            Debug.WriteLine(candle.OpenTime+"-"+candle.OpenPrice.ToString()+"-"+candle.TotalVolume+"--------------------Invoked method");//Присылает текущую(обновляет) и предыдущую свечу
+            Debug.WriteLine("CANDLE:----|"+candle.OpenTime+"-"+candle.OpenPrice.ToString()+"-"+candle.TotalVolume+"--------------------Invoked method");//Присылает текущую(обновляет) и предыдущую свечу
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
