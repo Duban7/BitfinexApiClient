@@ -12,10 +12,10 @@ namespace Connector.Connectors.Implementation
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri("https://api-pub.bitfinex.com/v2/");
         }
-        public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, DateTimeOffset? to = null, long? count = 0)
+        public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, string period, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = 0)
         {
-            var timeFrame = GetTimeFrameString(periodInSec);
-            string url = $"candles/trade:{timeFrame}:t{pair}/hist";
+            if(!AllowedPeriods.Contains(period)) period = "1h";
+            string url = $"candles/trade:{period}:t{pair}/hist";
 
             List<string> queryParams = new();
 
@@ -55,7 +55,7 @@ namespace Connector.Connectors.Implementation
             return trades.Select(t => new Trade
             {
                 Id = t[0].ToString(),
-                Time = DateTimeOffset.FromUnixTimeSeconds((long)t[1]),
+                Time = DateTimeOffset.FromUnixTimeMilliseconds((long)t[1]),
                 Amount = Math.Abs(t[2]),
                 Side = t[2] > 0 ? "Buy" : "Sell",
                 Price = t[3],
@@ -63,7 +63,7 @@ namespace Connector.Connectors.Implementation
             });
         }
 
-        public async Task<object> GetTickerInfo(string pair)
+        public async Task<Ticker> GetTickerInfo(string pair)
         {
             var response = await _httpClient.GetAsync($"ticker/t{pair}");
             response.EnsureSuccessStatusCode();
@@ -87,20 +87,7 @@ namespace Connector.Connectors.Implementation
             return ticker;
         }
 
-        private static string GetTimeFrameString(int periodInSec) => periodInSec switch
-        {
-            60 => "1m",
-            300 => "5m",
-            900 => "15m",
-            1800 => "30m",
-            3600 => "1h",
-            10800 => "3h",
-            21600 => "6h",
-            43200 => "12h",
-            86400 => "1D",
-            604800 => "1W",
-            _ => "1h"
-        };
+        private List<string> AllowedPeriods = new List<string> {"1m","5m","15m","30m", "1h", "3h", "6h", "12h", "1D","1W"  };
 
         public void Dispose()
         {

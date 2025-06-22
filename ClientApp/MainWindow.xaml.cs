@@ -1,17 +1,6 @@
-﻿using Connector;
-using Connector.Connectors.Implementation;
-using Connector.Models;
-using System.Diagnostics;
-using System.Text;
+﻿using Connector.Connectors.Implementation;
+using Connector.Connectors.Interfaces;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ClientApp
 {
@@ -25,32 +14,48 @@ namespace ClientApp
         public MainWindow()
         {
             InitializeComponent();
-            con = new();
-            Wscon = new();
+            IRESTBitfinexConnector rest = new RESTBitfinexConnector();
+            this.DataContext = new MainWindowViewModel(rest, null);
+            //con = new();
+            //Wscon = new();
 
-            Wscon.SubscribeCandles("BTCUSD", 60, count: 1);
-            Wscon.CandleSeriesProcessing += NewBuyTradeHandle;
-            Wscon.SubscribeTrades("BTCUSD", 1);
-            Wscon.NewSellTrade += Wscon_NewSellTrade;
-            Wscon.NewBuyTrade += Wscon_NewSellTrade;
+            //Wscon.SubscribeCandles("BTCUSD", 60, count: 1);
+            //Wscon.CandleSeriesProcessing += NewBuyTradeHandle;
+            //Wscon.SubscribeTrades("BTCUSD", 1);
+            //Wscon.NewSellTrade += Wscon_NewSellTrade;
+            //Wscon.NewBuyTrade += Wscon_NewSellTrade;
         }
 
-        private void Wscon_NewSellTrade(Trade obj)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("TRADE:----|"+obj.Time+"---------------invoke method");// te - trade executed tu - trade uodated
+            ContentControl.Visibility = Visibility.Collapsed;
+            BackButton.Visibility = Visibility.Collapsed;
+            StartScreen.Visibility = Visibility.Visible;
         }
 
-        private void NewBuyTradeHandle(Candle candle)
+        private void ContentButton_Click(object sender, RoutedEventArgs e)
         {
-
-            Debug.WriteLine("CANDLE:----|"+candle.OpenTime+"-"+candle.OpenPrice.ToString()+"-"+candle.TotalVolume+"--------------------Invoked method");//Присылает текущую(обновляет) и предыдущую свечу
+            StartScreen.Visibility = Visibility.Collapsed;
+            ContentControl.Visibility = Visibility.Visible;
+            BackButton.Visibility = Visibility.Visible;
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            label.Content  = (await con.GetTickerInfo("BTCUSD"));
+        //private void Wscon_NewSellTrade(Trade obj)
+        //{
+        //    Debug.WriteLine("TRADE:----|"+obj.Time+"---------------invoke method");// te - trade executed tu - trade uodated
+        //}
 
-            return;
-        }
+        //private void NewBuyTradeHandle(Candle candle)
+        //{
+
+        //    Debug.WriteLine("CANDLE:----|"+candle.OpenTime+"-"+candle.OpenPrice.ToString()+"-"+candle.TotalVolume+"--------------------Invoked method");//Присылает текущую(обновляет) и предыдущую свечу
+        //}
+
+        //private async void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    label.Content  = (await con.GetTickerInfo("BTCUSD"));
+
+        //    return;
+        //}
     }
 }
