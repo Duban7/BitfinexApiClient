@@ -7,6 +7,8 @@ namespace Connector.Connectors.Implementation
     public class RESTBitfinexConnector : IRESTBitfinexConnector, IDisposable
     {
         private readonly HttpClient _httpClient;
+        private List<string> AllowedPeriods = new List<string> { "1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1D", "1W" };
+
         public RESTBitfinexConnector()
         {
             _httpClient = new HttpClient();
@@ -59,7 +61,8 @@ namespace Connector.Connectors.Implementation
                 Amount = Math.Abs(t[2]),
                 Side = t[2] > 0 ? "Buy" : "Sell",
                 Price = t[3],
-                Pair = pair
+                Pair = pair,
+                IsExecuted = true
             });
         }
 
@@ -86,8 +89,6 @@ namespace Connector.Connectors.Implementation
 
             return ticker;
         }
-
-        private List<string> AllowedPeriods = new List<string> {"1m","5m","15m","30m", "1h", "3h", "6h", "12h", "1D","1W"  };
 
         public void Dispose()
         {

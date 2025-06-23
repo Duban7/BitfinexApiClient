@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Connector.Connectors.Implementation
 {
@@ -20,10 +19,8 @@ namespace Connector.Connectors.Implementation
         public event Action<Trade> NewSellTrade;
         public event Action<Candle> CandleSeriesProcessing;
 
-        public WSBitfinexConnector()
-        {
-            
-        }
+        private List<string> AllowedPeriods = new List<string> { "1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1D", "1W" };
+        public WSBitfinexConnector() { }
 
         private async Task ConnectWebSocketAsync()
         {
@@ -76,7 +73,6 @@ namespace Connector.Connectors.Implementation
                         string prop = element.GetString()!.Split(':').Last();
 
                         _channelToPairMap[chanId.GetInt32()] = $"{channel}:{prop.Replace("t", "")}";
-                        Debug.WriteLine("Subscribed ----- "+channel);
                     }
                     return;
                 }
@@ -92,7 +88,6 @@ namespace Connector.Connectors.Implementation
 
                     if (data[1].ToString() == "hb")
                     {
-                        Debug.WriteLine("Heart beat----------");
                         return;
                     }
                     switch (channelType)
@@ -274,7 +269,6 @@ namespace Connector.Connectors.Implementation
             _candleSubscriptions.Remove(pair);
         }
 
-        private List<string> AllowedPeriods = new List<string> { "1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1D", "1W" };
         public void Dispose()
         {
             _webSocket.Dispose();

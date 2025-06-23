@@ -20,28 +20,36 @@
                 <views:WsControl />
             </Grid>
         </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:WalletViewModel}">
+            <Grid>
+                <views:WalletControl />
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
 
-        <Grid x:Name="StartScreen" Visibility="Visible">
-            <ComboBox  Grid.Row="0" Width="150" HorizontalAlignment="Center" VerticalAlignment="Top"
+        <Grid x:Name="StartScreen"
+              Visibility="Visible">
+            <ComboBox  Grid.Row="0" Width="150" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 20 0 0"
                        ItemsSource="{Binding AvailablePairs}" SelectedItem="{Binding SelectedPair}"/>
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Button Content="WebSocket" Width="200" Height="80" Margin="0,10" Command="{Binding OpenWsCommand}" Click="ContentButton_Click"/>
-                <Button Content="REST" Width="200" Height="80" Margin="0,10" Command="{Binding  OpenRestCommand}" Click="ContentButton_Click"/>
+                <Button Content="WebSocket" Width="200" Height="80" Margin="0,10"
+                        Command="{Binding OpenWsCommand}" Click="ContentButton_Click"/>
+                <Button Content="REST" Width="200" Height="80" Margin="0,10"
+                        Command="{Binding  OpenRestCommand}" Click="ContentButton_Click"/>
+                <Button Content="Wallet" Width="200" Height="80" Margin="0,10"
+                        Command="{Binding  OpenWalletCommand}" Click="ContentButton_Click"/>
             </StackPanel>
         </Grid>
 
-        <ContentControl x:Name="ContentControl" Visibility="Collapsed" Content="{Binding CurrentVM}"/>
+        <ContentControl x:Name="ContentControl" 
+                        Visibility="Collapsed"
+                        Content="{Binding CurrentVM}"/>
 
         <Button x:Name="BackButton"
-                Content="Back" 
-                Click="BackButton_Click"
-                Command="{Binding BackCommand}" 
-                HorizontalAlignment="Left" 
-                VerticalAlignment="Bottom"
-                Margin="10"
-                Visibility="Collapsed"/>
+                Click="BackButton_Click" Command="{Binding BackCommand}" 
+                HorizontalAlignment="Left" Content="Back" VerticalAlignment="Top" Margin="10" Width="40" Height="30" Visibility="Collapsed"/>
     </Grid>
 </Window>

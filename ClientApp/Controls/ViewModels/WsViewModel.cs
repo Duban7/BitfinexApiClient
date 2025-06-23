@@ -3,7 +3,6 @@ using ClientApp.Shared;
 using Connector.Connectors.Interfaces;
 using Connector.Models;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 

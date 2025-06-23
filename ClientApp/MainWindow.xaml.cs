@@ -30,16 +30,5 @@ namespace ClientApp
             ContentControl.Visibility = Visibility.Visible;
             BackButton.Visibility = Visibility.Visible;
         }
-
-        //private void Wscon_NewSellTrade(Trade obj)
-        //{
-        //    Debug.WriteLine("TRADE:----|"+obj.Time+"---------------invoke method");// te - trade executed tu - trade uodated
-        //}
-
-        //private void NewBuyTradeHandle(Candle candle)
-        //{
-
-        //    Debug.WriteLine("CANDLE:----|"+candle.OpenTime+"-"+candle.OpenPrice.ToString()+"-"+candle.TotalVolume+"--------------------Invoked method");//Присылает текущую(обновляет) и предыдущую свечу
-        //}
     }
 }

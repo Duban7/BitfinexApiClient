@@ -20,17 +20,23 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Max count" Margin="0 0 140 0"/>
-            <TextBox Grid.Column="0" HorizontalAlignment="Center" Width="70" Height="30" TextAlignment="Center" VerticalContentAlignment="Center" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding SelectedMaxCount}"/>
-            <Button Grid.Column="0" HorizontalAlignment="Right" Content="Get trades" Width="70" Height="30" Margin="0 0 50 0" Command="{Binding TradesCommand}"/>
+            <TextBox Grid.Column="0" HorizontalAlignment="Center" Width="70" Height="30" TextAlignment="Center" VerticalContentAlignment="Center"
+                     PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding SelectedMaxCount}"/>
+            <Button Grid.Column="0" HorizontalAlignment="Right" Content="Get trades" Width="70" Height="30" Margin="0 0 50 0"
+                    Command="{Binding TradesCommand}"/>
 
-            <Button Grid.Column="1" HorizontalAlignment="Right" Content="Get ticker" Width="70" Height="30" Margin="0 0 50 0"  Command="{Binding TickerCommand}"/>
+            <Button Grid.Column="1" HorizontalAlignment="Right" Content="Get ticker" Width="70" Height="30" Margin="0 0 50 0" 
+                    Command="{Binding TickerCommand}"/>
 
             <TextBlock Grid.Column="2" HorizontalAlignment="Left" Text="Select period" VerticalAlignment="Center" Margin="50 0 0 0"/>
-            <ComboBox Grid.Column="2" HorizontalAlignment="Center" Width="70" Height="30" ItemsSource="{Binding Periods}" SelectedItem="{Binding SelectedPeriod}"/>
-            <Button Grid.Column="2" HorizontalAlignment="Right" Width="70" Height="30" Content="Get candles" Margin="0 0 50 0"  Command="{Binding CandlesCommand}"/>
+            <ComboBox Grid.Column="2" HorizontalAlignment="Center" Width="70" Height="30"
+                      ItemsSource="{Binding Periods}" SelectedItem="{Binding SelectedPeriod}"/>
+            <Button Grid.Column="2" HorizontalAlignment="Right" Width="70" Height="30" Content="Get candles" Margin="0 0 50 0" 
+                    Command="{Binding CandlesCommand}"/>
         </Grid>
 
-        <DataGrid Grid.Row="1" Margin="30" AutoGenerateColumns="{Binding AutoColumns}" ItemsSource="{Binding Data}">
+        <DataGrid Grid.Row="1" Margin="30" IsReadOnly="True"
+                  AutoGenerateColumns="{Binding AutoColumns}" ItemsSource="{Binding Data}">
 
         </DataGrid>
     </Grid>

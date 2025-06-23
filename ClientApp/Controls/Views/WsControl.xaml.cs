@@ -36,18 +36,21 @@ namespace ClientApp.Controls.Views
         {
             TradeButton.IsEnabled = false;
             CandleButton.IsEnabled = false;
+            CandleComboBox.IsEnabled = false;
             ClearButton.IsEnabled = true;
         }
         private void CandleButton_Click(object sender, RoutedEventArgs e)
         {
             TradeButton.IsEnabled = false;
             CandleButton.IsEnabled = false;
+            CandleComboBox.IsEnabled = false;
             ClearButton.IsEnabled = true;
         }
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
             TradeButton.IsEnabled = true;
             CandleButton.IsEnabled = true;
+            CandleComboBox.IsEnabled = true;
             ClearButton.IsEnabled = false;
         }
     }

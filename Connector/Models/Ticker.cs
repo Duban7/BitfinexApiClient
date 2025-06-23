@@ -1,6 +1,6 @@
-﻿
-namespace Connector.Models
+﻿namespace Connector.Models
 {
+    //Added ticker model
     public class Ticker
     {
         public decimal BID { get; set; }

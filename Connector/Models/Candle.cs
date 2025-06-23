@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Connector.Models
+﻿namespace Connector.Models
 {
     public class Candle
     {
@@ -33,11 +27,8 @@ namespace Connector.Models
         /// </summary>
         public decimal ClosePrice { get; set; }
 
-
-        /// <summary>
-        /// Partial (Общая сумма сделок)
-        /// </summary>
-        // public decimal TotalPrice { get; set; } api не возвращае сумму сделок
+        // public decimal TotalPrice { get; set; }
+        // Bitfinex api doesn't return Total price of candle
 
         /// <summary>
         /// Partial (Общий объем)

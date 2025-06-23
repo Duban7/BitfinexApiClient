@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Connector.Models
+﻿namespace Connector.Models
 {
     public class Trade
     {
@@ -42,6 +36,7 @@ namespace Connector.Models
         /// <summary>
         /// Trade State
         /// </summary>
+        // Added trade state. Websocket updates data and shows update with parameters "te" or "tu". So to separate already executed and updated trades added that parameter.
         public bool IsExecuted { get; set; }
 
     }
