@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Connector
+namespace Connector.Models
 {
     public class Trade
     {
@@ -38,6 +38,11 @@ namespace Connector
         /// Id трейда
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Trade State
+        /// </summary>
+        public bool IsExecuted { get; set; }
 
     }
 }

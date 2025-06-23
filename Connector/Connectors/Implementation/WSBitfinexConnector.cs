@@ -13,7 +13,7 @@ namespace Connector.Connectors.Implementation
         private ClientWebSocket _webSocket;
         private readonly Uri _uri = new Uri("wss://api-pub.bitfinex.com/ws/2");
         private readonly Dictionary<string, int> _tradeSubscriptions = new Dictionary<string, int>();
-        private readonly Dictionary<string, int> _candleSubscriptions = new Dictionary<string, int>();
+        private readonly Dictionary<string, string> _candleSubscriptions = new Dictionary<string, string>();
         private readonly Dictionary<int, string> _channelToPairMap = new Dictionary<int, string>();
 
         public event Action<Trade> NewBuyTrade;
@@ -76,6 +76,7 @@ namespace Connector.Connectors.Implementation
                         string prop = element.GetString()!.Split(':').Last();
 
                         _channelToPairMap[chanId.GetInt32()] = $"{channel}:{prop.Replace("t", "")}";
+                        Debug.WriteLine("Subscribed ----- "+channel);
                     }
                     return;
                 }
@@ -130,19 +131,18 @@ namespace Connector.Connectors.Implementation
                     foreach (var trade in trades)
                     {
                         var tradeData = trade.EnumerateArray().ToArray();
-                        ProcessSingleTrade(tradeData, pair);
+                        ProcessSingleTrade(tradeData, pair, "te");
                     }
                 }
             }
             else
             {
-                //te - trade executed tu - trade uodated
-                var tradeData = dataArray[2].EnumerateArray().ToArray();
-                ProcessSingleTrade(tradeData, pair);
+                    var tradeData = dataArray[2].EnumerateArray().ToArray();
+                    ProcessSingleTrade(tradeData, pair, dataArray[1].GetString()!);    
             }
         }
 
-        private void ProcessSingleTrade(JsonElement[] tradeData, string pair)
+        private void ProcessSingleTrade(JsonElement[] tradeData, string pair, string tradeState)
         {
             if (tradeData.Length >= 4)
             {
@@ -153,7 +153,8 @@ namespace Connector.Connectors.Implementation
                     Time = DateTimeOffset.FromUnixTimeMilliseconds(tradeData[1].GetInt64()).DateTime,
                     Amount = Math.Abs(tradeData[2].GetDecimal()),
                     Price = tradeData[3].GetDecimal(),
-                    Side = tradeData[2].GetDecimal() > 0 ? "Buy" : "Sell"
+                    Side = tradeData[2].GetDecimal() > 0 ? "Buy" : "Sell",
+                    IsExecuted = tradeState == "te" ? true : false
                 };
 
                 if (tradeObj.Side == "Buy")
@@ -234,7 +235,7 @@ namespace Connector.Connectors.Implementation
             _tradeSubscriptions.Remove(pair);
         }
 
-        public async void SubscribeCandles(string pair, int periodInSec, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = 0)
+        public async void SubscribeCandles(string pair, string period, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = 0)
         {
             if (_webSocket == null || _webSocket.State != WebSocketState.Open)
                 await ConnectWebSocketAsync();
@@ -242,16 +243,16 @@ namespace Connector.Connectors.Implementation
             if (_candleSubscriptions.ContainsKey(pair))
                 return;
 
-            var timeframe = GetTimeFrameString(periodInSec);
+            if (!AllowedPeriods.Contains(period)) period = "1m";
             var subscribeRequest = new
             {
                 @event = "subscribe",
                 channel = "candles",
-                key = $"trade:{timeframe}:t{pair}"
+                key = $"trade:{period}:t{pair}"
             };
 
             await SendWebSocketMessage(JsonSerializer.Serialize(subscribeRequest));
-            _candleSubscriptions[pair] = periodInSec;
+            _candleSubscriptions[pair] = period;
         }
 
         public async void UnsubscribeCandles(string pair)
@@ -273,21 +274,7 @@ namespace Connector.Connectors.Implementation
             _candleSubscriptions.Remove(pair);
         }
 
-        private static string GetTimeFrameString(int periodInSec) => periodInSec switch
-        {
-            60 => "1m",
-            300 => "5m",
-            900 => "15m",
-            1800 => "30m",
-            3600 => "1h",
-            10800 => "3h",
-            21600 => "6h",
-            43200 => "12h",
-            86400 => "1D",
-            604800 => "1W",
-            _ => "1h"
-        };
-
+        private List<string> AllowedPeriods = new List<string> { "1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1D", "1W" };
         public void Dispose()
         {
             _webSocket.Dispose();

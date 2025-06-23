@@ -15,7 +15,7 @@ namespace Connector.Connectors.Interfaces
         public void UnsubscribeTrades(string pair);
 
         public event Action<Candle> CandleSeriesProcessing;
-        public void SubscribeCandles(string pair, int periodInSec, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = 0);
+        public void SubscribeCandles(string pair, string period, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = 0);
         public void UnsubscribeCandles(string pair);
 
     }

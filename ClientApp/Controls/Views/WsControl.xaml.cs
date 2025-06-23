@@ -24,6 +24,31 @@ namespace ClientApp.Controls.Views
         public WsControl()
         {
             InitializeComponent();
+            ClearButton.IsEnabled = false;
+        }
+
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = Regex.IsMatch(e.Text, "[^0-9.-]+");
+        }
+
+        private void TradeButton_Click(object sender, RoutedEventArgs e)
+        {
+            TradeButton.IsEnabled = false;
+            CandleButton.IsEnabled = false;
+            ClearButton.IsEnabled = true;
+        }
+        private void CandleButton_Click(object sender, RoutedEventArgs e)
+        {
+            TradeButton.IsEnabled = false;
+            CandleButton.IsEnabled = false;
+            ClearButton.IsEnabled = true;
+        }
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            TradeButton.IsEnabled = true;
+            CandleButton.IsEnabled = true;
+            ClearButton.IsEnabled = false;
         }
     }
 }

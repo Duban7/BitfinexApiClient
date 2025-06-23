@@ -14,7 +14,7 @@ namespace ClientApp.Controls.ViewModels
 {
     public class RestViewModel : ObservableObject
     {
-        private IRESTBitfinexConnector _connector;
+        private readonly IRESTBitfinexConnector _connector;
         public string Pair { get; set; }
         public ObservableCollection<object> Data { get; set; }
         public ObservableCollection<string> Periods { get; set; } = new ObservableCollection<string> { "1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1D", "1W" };

@@ -14,7 +14,7 @@ namespace Connector.Connectors.Implementation
         }
         public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, string period, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = 0)
         {
-            if(!AllowedPeriods.Contains(period)) period = "1h";
+            if(!AllowedPeriods.Contains(period)) period = "1m";
             string url = $"candles/trade:{period}:t{pair}/hist";
 
             List<string> queryParams = new();
